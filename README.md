@@ -38,7 +38,7 @@ A separate Makefile is provided for OSX users.
 # Windows
 
 The extension should compile fine on Windows. Check the
-[istructions](https://www.sqlite.org/loadext.html) on the SQLite page for details.
+[instructions](https://www.sqlite.org/loadext.html) on the SQLite page for details.
 
 # License
 
