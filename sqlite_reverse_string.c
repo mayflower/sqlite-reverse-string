@@ -29,8 +29,10 @@
 
 SQLITE_EXTENSION_INIT1
 
+#ifndef SQLITE_CORE
 #ifdef _WIN32
 __declspec(dllexport)
+#endif
 #endif
 
 // #############################################################################
@@ -119,6 +121,12 @@ static void result_string_destructor(void* result_string) {
 }
 
 static void string_reverse_implementation(sqlite3_context* ctx, int argc, sqlite3_value** argv) {
+    const unsigned char* input = 0;
+    int input_type;
+    sqlite_uint64 input_length;
+    char* result;
+    int* decoded;
+
     if (argc < 1) {
         sqlite3_result_error(ctx, "not enough parameters", -1);
         return;
@@ -129,8 +137,7 @@ static void string_reverse_implementation(sqlite3_context* ctx, int argc, sqlite
         return;
     }
 
-    const unsigned char* input = 0;
-    int input_type = sqlite3_value_type(argv[0]);
+    input_type = sqlite3_value_type(argv[0]);
 
     if (input_type != SQLITE_NULL) {
         input = sqlite3_value_text(argv[0]);
@@ -141,9 +148,9 @@ static void string_reverse_implementation(sqlite3_context* ctx, int argc, sqlite
         return;
     }
 
-    sqlite_uint64 input_length = strlen_utf8(input);
-    char* result = sqlite3_malloc(4 * input_length + 1);
-    int* decoded = sqlite3_malloc(sizeof(int) * input_length);
+    input_length = strlen_utf8(input);
+    result = sqlite3_malloc(4 * input_length + 1);
+    decoded = sqlite3_malloc(sizeof(int) * input_length);
 
     decode_utf8(input, decoded);
     reverse_string(decoded, result, input_length);
